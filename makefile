@@ -12,3 +12,6 @@ bank: $(OBJ)
 	$(CC) $(CFLAGS) -o bank $(OBJ)
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
+
+clean:
+	rm bank $(OBJ)
