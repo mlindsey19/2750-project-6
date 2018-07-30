@@ -4,19 +4,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "newAcct.h"
 
-int main( int argc, int *argv[] ) {
 
-	struct acctInfo {
-		char firstName[30];
-		char middleI; //middle initial
-		char lastName[30];
-		char acctNum[7];  //6dig account number
-		long double acctBal; //account balance
+int main( int argc, char **argv ) {
+
 	
-		};
-
-
 	FILE * acct_fptr = fopen( "accounts.dat", "r" ); //accounts.dat file pointer
 	
 
@@ -28,19 +21,10 @@ int main( int argc, int *argv[] ) {
 
 	struct acctInfo user;
 
+	newAcct(&user);
 
-		//ask user for info
-	printf( "Enter first name:\n" );
-	scanf( "%s",user.firstName );
-	printf("middle initial:\n" );
-	scanf( "%s", user.middleI );
-	printf( "lastname:\n" );
-	scanf( "%s", user.lastName );
-	printf( "Choose 6 digit account number: \n" );
-	scanf( "%s", user.acctNum ); 
-	printf( "\n%s\n", user.acctNum );
-	printf( "%s", user.firstName );
-		//write to file
+	//print to file
+		
 		fwrite(&user, sizeof(user), 1, acct_fptr);
 
 
