@@ -10,9 +10,10 @@ struct acctInfo {
 	char firstName[30];
 	char middleI[2]; //middle initial
 	char lastName[30];
-	char acctNum[7];  //6dig account number
+	long int acctNum;  //6dig account number
 	long double acctBal; //account balance
 		};
+
 
 
 void newAcct( struct acctInfo *user ){
@@ -34,16 +35,13 @@ void newAcct( struct acctInfo *user ){
 	scanf( "%s\0", user->lastName );
 	
 	printf( "Choose 6 digit account number: \n" );
-	scanf( "%s", temp);
-	for (int i = 0; i < 7; i++){
-		user->acctNum[i] = temp[i];
-	}
-	user->acctNum[7] = '\0';
+	scanf( "%li", &user->acctNum);
 	
+
 	printf( "Enter account balance: \n" );
 	scanf( "%Lf", &user->acctBal );
 
-	printf( "\n%s\n", user->acctNum );
+	printf( "\n%li\n", user->acctNum );
 	printf( "%.2Lf\n", user->acctBal );
 	printf( "%s\n", user->firstName );
 	printf( "%s\n", user->lastName );

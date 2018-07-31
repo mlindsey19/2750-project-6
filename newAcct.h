@@ -9,6 +9,6 @@ struct acctInfo {
 	long double acctBal; //account balance
 		};
 
-void newAcct(struct acctInfo *);
+void newAcct(struct acctInfo * );
 
 #endif
