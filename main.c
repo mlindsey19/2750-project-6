@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "newAcct.h"
 #include "menu.h"
+#include "struct.h"
 
 int checkForAcctNum(long int const *, long int);
 
@@ -43,9 +44,12 @@ int main( int argc, char **argv ) {
 			//withdrawal
 			break;
 		case 3: 
-			newAcct(&user[numberOfAccts]);
-			acctNumArray[numberOfAccts] = &(user[numberOfAccts++].acctNum);
-			
+			user[numberOfAccts] = newAcct();
+			acctNumArray[numberOfAccts] = user[numberOfAccts].acctNum;
+			printf("%li\n", user[numberOfAccts].acctNum);
+			numberOfAccts++;
+			for (int i = 0; i < 15; i++)
+				printf("\t%i:   %li\n", i,  acctNumArray[i]);
 			break;
 		case 4:
 			//remove accounts
@@ -80,7 +84,7 @@ printf("%li\t%i", acctNumArray[numberOfAccts -1], numberOfAccts);
 	
 printf("result: %i", result);}
 
-	printf( "\n%s\n", userTest.acctNum );
+	printf( "\n%li\n", userTest.acctNum );
 	printf( "%.2Lf\n", userTest.acctBal );
 	printf( "%s\n", userTest.firstName );
 	printf( "%s\n", userTest.lastName );
