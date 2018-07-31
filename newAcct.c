@@ -17,21 +17,34 @@ struct acctInfo {
 
 void newAcct( struct acctInfo *user ){
 
-
+	char temp[200]; //for extra input after middle I
+	
 		//ask user for info
 	printf( "Enter first name:\n" );
 	scanf( "%s\0",user->firstName );
+
 	printf("middle initial:\n" );
-	scanf( "%1s\0", user->middleI );
+	scanf( "%s", temp);
+	user->middleI[0] = temp[0];
+	user-> middleI[1] = '\0';
+
+
+	
 	printf( "lastname:\n" );
 	scanf( "%s\0", user->lastName );
+	
 	printf( "Choose 6 digit account number: \n" );
-	scanf( "%6s\0", user->acctNum );
+	scanf( "%s", temp);
+	for (int i = 0; i < 7; i++){
+		user->acctNum[i] = temp[i];
+	}
+	user->acctNum[7] = '\0';
+	
 	printf( "Enter account balance: \n" );
 	scanf( "%Lf", &user->acctBal );
 
 	printf( "\n%s\n", user->acctNum );
-	printf( "%Lf\n", user->acctBal );
+	printf( "%.2Lf\n", user->acctBal );
 	printf( "%s\n", user->firstName );
 	printf( "%s\n", user->lastName );
 	printf( "%s\n", user->middleI );
