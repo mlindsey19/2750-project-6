@@ -12,14 +12,17 @@
 
 int checkForAcctNum(long int const *, long int);
 void writeToFile(FILE *, acctInfo *, const int);
-void readFile( FILE *, const int);
 void deposit(acctInfo *,const long double);
+void readFile( FILE *, const int);
 void withdrawal( acctInfo *, const long double);
+void displayAcct(acctInfo *);
+
+
 int main( int argc, char **argv ) {
 
 
 	FILE *acct_fptr = fopen( "accounts.dat", "rb+" ); //accounts.dat file pointer
-	if ( acct_fptr ==  NULL )
+	if ( acct_fptr ==  NULL) 
 		{
 		  printf( "ERROR: the File accounts.dat could not be opened!\n");
 		  return 1;
@@ -57,13 +60,20 @@ int main( int argc, char **argv ) {
 			}			
 			break;
 		case 2:
-			//withdrawal
+			//withdrawal	
+			printf("enter account number:\n");
+			scanf("%li", &number);
+			int k =	checkForAcctNum(acctNumArray, number);
+			if (k != -1){
+				printf("enter ammount : $");
+				scanf ("%Lf", &value);
+				withdrawal(&user[k], value);
+			}
 			break;
 		case 3: 
 			user[numberOfAccts] = newAcct();
 			acctNumArray[numberOfAccts] = user[numberOfAccts].acctNum;
-			printf("%li\n", user[numberOfAccts].acctNum);
-			for (int i = 0; i < 15; i++){
+			for (int i = 0; i < 5; i++){
 				printf("\t%i:   %li\n", i,  acctNumArray[i]);
 				}
 
@@ -85,39 +95,23 @@ int main( int argc, char **argv ) {
 		}
 	}
 	
-	
-
 	fclose(acct_fptr);
 
 return 0;
 }
 	//print to file
 void writeToFile(FILE *acct_fptr, acctInfo *user, const int N){		
-		
-
+	fseek( acct_fptr, 0L, SEEK_END );		
 	acctInfo *ptr = &user[N];
-	int result;
-	result = fwrite(ptr, sizeof(acctInfo), 1, acct_fptr);
-	printf("result: %i", result);
+	fwrite(ptr, sizeof(acctInfo), 1, acct_fptr);
 }
 
 void readFile(FILE *acct_fptr, const int N){
-	acctInfo userTest[50];
-	int result = fread(&userTest, sizeof(acctInfo), 1, acct_fptr);
-
-	printf( "%-6s %-15s %10.2Lf\n", userTest->firstName, userTest->lastName, userTest->acctBal);
-
-	printf("result: %i", result);
-
-	printf( "\n%li\n", userTest->acctNum );
-	printf( "%.2Lf\n", userTest->acctBal );
-	printf( "%s\n", userTest->firstName );
-	printf( "%s\n", userTest->lastName );
-	printf( "%s\n", userTest->middleI );
-
-	
+	acctInfo userTest;
+	fseek(acct_fptr, 0L, SEEK_SET);
+	fread(&userTest, sizeof(acctInfo), 1, acct_fptr);
+	displayAcct(&userTest);
 }
-
 
 
 int checkForAcctNum(long int const *arr, long int x){
@@ -138,4 +132,9 @@ void withdrawal (acctInfo * user, const long double X){
 	printf("not enought funds");
 	}
 	
+}
+void displayAcct(acctInfo *user){
+	printf("%-6s %s %s\naccount number:%-10li\nbalance:%-10Lf", user->firstName, user->middleI, 
+			user->lastName, user->acctNum, user->acctBal);
+
 }
