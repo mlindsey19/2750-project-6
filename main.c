@@ -8,7 +8,7 @@
 #include "menu.h"
 #include "struct.h"
 #include <errno.h>
-
+#include "getAccts.h"
 
 int checkForAcctNum(long int const *, long int);
 void writeToFile(FILE *, acctInfo *, const int);
@@ -19,34 +19,36 @@ void displayAcct(acctInfo *);
 
 
 int main( int argc, char **argv ) {
-
-
+	
+	
 	FILE *acct_fptr = fopen( "accounts.dat", "rb+" ); //accounts.dat file pointer
 	if ( acct_fptr ==  NULL) 
 		{
 		  printf( "ERROR: the File accounts.dat could not be opened!\n");
 		  return 1;
 		}
-
-
-	
 	//properties
-	int numberOfAccts = 0;
+	int numberOfAccts = 0;	long int number;	long double value;
 
-	acctInfo user[50];
-	
+	acctInfo user; 		acctInfo *user_ptr = &user;
+
 	long int acctNumArray[50];
 	for ( int i = 0; i < 50; i++ ) {
 		acctNumArray[i] = 0;
 	}
 	
+	numberOfAccts = getAccts(acct_fptr, acctNumArray);
 
-			long int number;
-			long double value;
+	for ( int i = 0; i < 9; i++)
+		printf("%li ", acctNumArray[i]);
+	
+	printf("\n\t\t\t\tnumber of accts:%i\n\n", numberOfAccts);
+
 	while (numberOfAccts < 50 ){
 	switch ( menu() ){
 
-		case 0: 
+		case 0:
+			fclose(acct_fptr);
 			return 0;
 		case 1: 
 			//deposit
@@ -56,7 +58,7 @@ int main( int argc, char **argv ) {
 			if (p != -1){
 				printf("enter ammount : $");
 				scanf ("%Lf", &value);
-				deposit(&user[p], value);
+				deposit(user_ptr, value);
 			}			
 			break;
 		case 2:
@@ -67,18 +69,18 @@ int main( int argc, char **argv ) {
 			if (k != -1){
 				printf("enter ammount : $");
 				scanf ("%Lf", &value);
-				withdrawal(&user[k], value);
+				withdrawal(user_ptr, value);
 			}
 			break;
 		case 3: 
-			user[numberOfAccts] = newAcct();
-			acctNumArray[numberOfAccts] = user[numberOfAccts].acctNum;
+			newAcct(&user);
+			acctNumArray[numberOfAccts] = user.acctNum;
 			for (int i = 0; i < 5; i++){
 				printf("\t%i:   %li\n", i,  acctNumArray[i]);
 				}
 
-			writeToFile(acct_fptr, user, numberOfAccts);
-			readFile(acct_fptr, (numberOfAccts + 1));
+			writeToFile(acct_fptr, &user, numberOfAccts);
+			readFile(acct_fptr, numberOfAccts );
 			numberOfAccts++;
 			break;
 		case 4:
@@ -88,7 +90,13 @@ int main( int argc, char **argv ) {
 			//ballance inquiry
 			break;
 		case 6: 
+			
 			//view accounts
+			fseek(acct_fptr, 0L, SEEK_END);
+			int nrec = ftell(acct_fptr) / sizeof(acctInfo);
+			for (int i = 0; i < nrec; i++)	{
+				
+				}			
 			break;
 		default:
 			break;
@@ -101,19 +109,16 @@ return 0;
 }
 	//print to file
 void writeToFile(FILE *acct_fptr, acctInfo *user, const int N){		
-	fseek( acct_fptr, 0L, SEEK_END );		
-	acctInfo *ptr = &user[N];
-	fwrite(ptr, sizeof(acctInfo), 1, acct_fptr);
+	fseek( acct_fptr, (N * sizeof(acctInfo)), SEEK_SET );		
+	fwrite(user, sizeof(acctInfo), 1, acct_fptr);
 }
 
 void readFile(FILE *acct_fptr, const int N){
 	acctInfo userTest;
-	fseek(acct_fptr, 0L, SEEK_SET);
+	fseek(acct_fptr, ( (N) * sizeof(acctInfo)), SEEK_SET);
 	fread(&userTest, sizeof(acctInfo), 1, acct_fptr);
 	displayAcct(&userTest);
 }
-
-
 int checkForAcctNum(long int const *arr, long int x){
 	int position = -1;
 
@@ -130,11 +135,10 @@ void withdrawal (acctInfo * user, const long double X){
 	user->acctBal -= X;
 	} else {
 	printf("not enought funds");
-	}
-	
+	}	
 }
 void displayAcct(acctInfo *user){
-	printf("%-6s %s %s\naccount number:%-10li\nbalance:%-10Lf", user->firstName, user->middleI, 
+	printf("\t%s %s %s \naccount number: %li\nbalance:%.2Lf", user->firstName, user->middleI, 
 			user->lastName, user->acctNum, user->acctBal);
 
 }

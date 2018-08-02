@@ -2,9 +2,9 @@
 #define _STRUCT_H_
 
 typedef struct acctInfo {
-	char firstName[30];
+	char firstName[22];
 	char middleI[2]; //middle initial
-	char lastName[30];
+	char lastName[32];
 	long int acctNum;  //6dig account number
 	long double acctBal; //account balance
 		} acctInfo;
