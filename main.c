@@ -7,7 +7,6 @@
 #include "newAcct.h"
 #include "menu.h"
 #include "struct.h"
-#include <errno.h>
 #include "getAccts.h"
 
 int checkForAcctNum(long int const *, long int);
@@ -103,6 +102,13 @@ int main( int argc, char **argv ) {
 			break;
 		case 5: 
 			//ballance inquiry
+			printf("enter account number:\n");
+			scanf("%li", &number);
+			int s =	checkForAcctNum(acctNumArray, number);
+			fseek(acct_fptr, s * sizeof(acctInfo), SEEK_SET);
+			fread(user_ptr, sizeof(acctInfo), 1, acct_fptr);
+			printf("account balance is: \t%.2Lf", user_ptr->acctBal);
+
 			break;
 		case 6: 
 			
