@@ -16,7 +16,8 @@ void deposit(acctInfo *,const long double);
 void readFile( FILE *, const int);
 void withdrawal( acctInfo *, const long double);
 void displayAcct(acctInfo *);
-
+void removeAcct(const int,const int , long int *, FILE *);
+	
 
 int main( int argc, char **argv ) {
 	
@@ -58,9 +59,9 @@ int main( int argc, char **argv ) {
 			if (p != -1){
 				fseek(acct_fptr, p * sizeof(acctInfo), SEEK_SET);
 				fread(user_ptr, sizeof(acctInfo), 1, acct_fptr);
-				displayAcct(user_ptr);		scanf ("%Lf", &value);
-				printf("enter ammount : $");
 				deposit(user_ptr, value);
+				scanf ("%Lf", &value);
+				printf("enter ammount : $");
 				writeToFile(acct_fptr, user_ptr, p);
 			}			
 			break;
@@ -72,8 +73,8 @@ int main( int argc, char **argv ) {
 			if (k != -1){
 				fseek(acct_fptr, k * sizeof(acctInfo), SEEK_SET);
 				fread(user_ptr, sizeof(acctInfo), 1, acct_fptr);
-				displayAcct(user_ptr);	scanf ("%Lf", &value);
 				printf("enter ammount : $");
+				scanf ("%Lf", &value);
 				withdrawal(user_ptr, value);
 				writeToFile(acct_fptr, user_ptr, p);
 			}
@@ -90,7 +91,15 @@ int main( int argc, char **argv ) {
 			numberOfAccts++;
 			break;
 		case 4:
-			//remove accounts
+			printf("enter account number:\n");
+			scanf("%li", &number);
+			int m =	checkForAcctNum(acctNumArray, number);
+			if (m != -1){
+				//remove account
+			removeAcct( m, numberOfAccts, acctNumArray, acct_fptr );
+			numberOfAccts--;
+			}
+
 			break;
 		case 5: 
 			//ballance inquiry
@@ -148,5 +157,57 @@ void withdrawal (acctInfo * user, const long double X){
 void displayAcct(acctInfo *user){
 	printf("\t%s %s %s \naccount number: %li\nbalance:%.2Lf", user->firstName, user->middleI, 
 			user->lastName, user->acctNum, user->acctBal);
+
+}
+
+void removeAcct(const int m,const int num, long int *acctNumArray, FILE *acct_fptr){
+	long int temparr[50];
+		for ( int i = 0; i < 50; i++ ) {
+		temparr[i] = 0;
+	}
+	int tm = m;
+	int i2 = 0;
+	for ( int i = 0; i < 49; i++){
+		temparr[i] = acctNumArray[i2];
+		i2++;
+		if ( i == tm) {
+		i--;
+		tm--;
+		} 
+	}
+	for ( int i = 0; i < 50; i++ ) {
+		acctNumArray[i] = temparr[i];
+		
+	}
+
+
+	FILE *tmpFP = fopen( "temp.dat", "wb" ); //accounts.dat file pointer
+	if ( tmpFP ==  NULL) 
+		{
+		  printf( "ERROR: the File temp.dat could not be opened!\n");
+		}
+	acctInfo tmpusr;
+	rewind(acct_fptr);
+	for (int i = 0; i < num; i++){
+		fread(&tmpusr, sizeof(acctInfo), 1, acct_fptr);
+		if ( m == i){
+		}
+		else {
+			fwrite(&tmpusr, sizeof(acctInfo), 1, tmpFP);
+		}
+	}
+	fclose(tmpFP);
+	fclose(acct_fptr);
+
+	remove ("accounts.dat");
+	rename ("temp.dat", "accounts.dat");
+
+	
+	acct_fptr = fopen( "accounts.dat", "rb+" ); //accounts.dat file pointer
+	if ( acct_fptr ==  NULL) 
+		{
+		  printf( "ERROR: the File accounts.dat could not be opened!\n");
+		}
+
 
 }
