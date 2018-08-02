@@ -56,9 +56,12 @@ int main( int argc, char **argv ) {
 			scanf("%li", &number);
 			int p =	checkForAcctNum(acctNumArray, number);
 			if (p != -1){
+				fseek(acct_fptr, p * sizeof(acctInfo), SEEK_SET);
+				fread(user_ptr, sizeof(acctInfo), 1, acct_fptr);
+				displayAcct(user_ptr);		scanf ("%Lf", &value);
 				printf("enter ammount : $");
-				scanf ("%Lf", &value);
 				deposit(user_ptr, value);
+				writeToFile(acct_fptr, user_ptr, p);
 			}			
 			break;
 		case 2:
@@ -67,9 +70,12 @@ int main( int argc, char **argv ) {
 			scanf("%li", &number);
 			int k =	checkForAcctNum(acctNumArray, number);
 			if (k != -1){
+				fseek(acct_fptr, k * sizeof(acctInfo), SEEK_SET);
+				fread(user_ptr, sizeof(acctInfo), 1, acct_fptr);
+				displayAcct(user_ptr);	scanf ("%Lf", &value);
 				printf("enter ammount : $");
-				scanf ("%Lf", &value);
 				withdrawal(user_ptr, value);
+				writeToFile(acct_fptr, user_ptr, p);
 			}
 			break;
 		case 3: 
@@ -95,7 +101,9 @@ int main( int argc, char **argv ) {
 			fseek(acct_fptr, 0L, SEEK_END);
 			int nrec = ftell(acct_fptr) / sizeof(acctInfo);
 			for (int i = 0; i < nrec; i++)	{
-				
+				fseek(acct_fptr, i * sizeof(acctInfo), SEEK_SET);
+				fread(user_ptr, sizeof(acctInfo), 1, acct_fptr);
+				displayAcct(user_ptr);	
 				}			
 			break;
 		default:
